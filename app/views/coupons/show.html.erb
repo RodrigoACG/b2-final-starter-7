@@ -4,4 +4,11 @@
 <p>Code: <%= @coupon.code %></p>
 <p>Amount off: <%= @coupon.dollar_off %></p>
 <p>Status: <%= @coupon.status %></p>
+
+<% if @coupon.status == "active"  %> 
+  <%= button_to "Deactivate #{@coupon.name}", merchant_coupon_path, method: :patch, params: {status: "inactive"} %>
+<% elsif @coupon.status == "inactive" %>
+  <%= button_to "Activate #{@coupon.name}", merchant_coupon_path ,method: :patch, params: {status: "active"} %>
+<% end %>
+
 <p>Times used: <%= @coupon.times_used %></p>

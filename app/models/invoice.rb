@@ -9,7 +9,7 @@ class Invoice < ApplicationRecord
   has_many :merchants, through: :items
   belongs_to :coupon, optional: true
 
-  enum status: [:cancelled, :in_progress, :completed]
+  enum status: {cancelled: 0, in_progress: 1, completed: 2}
 
   def total_revenue
     invoice_items.sum("unit_price * quantity")
