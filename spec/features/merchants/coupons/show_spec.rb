@@ -83,7 +83,7 @@ RSpec.describe "Coupons show page" do
     expect(current_path).to eq(merchant_coupon_path(@merchant1, @coupon2))
     
     expect(page).to have_content("Sorry, can't deactivate. Coupon is sill in use")
-    save_and_open_page
+    # save_and_open_page
     end
   end
 end
