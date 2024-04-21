@@ -24,6 +24,25 @@ class CouponsController < ApplicationController
     redirect_to merchant_coupons_path(params[:merchant_id])
   end
 
+ 
+
+  def update 
+    merchant = Merchant.find(params[:merchant_id])
+    # invoice = Invoice.find(params[:invoice_id])
+
+    coupon = Coupon.find(params[:id])
+    
+    if merchant.invoices.completed
+      merchant.coupons.update!(coupon_params)
+      flash[:alert] = ("Successfully changed status")
+    end
+
+    if merchant.invoices.in_progress
+      flash[:alert] = ("Sorry, can't deactivate. Coupon is sill in use")
+    end
+    redirect_to merchant_coupon_path(merchant, coupon)
+  end
+
   private 
 
   def coupon_params
