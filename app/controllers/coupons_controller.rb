@@ -6,12 +6,22 @@ class CouponsController < ApplicationController
   def show 
     @coupon = Coupon.find(params[:id])
   end
-
+  
   def new;end
-
+  
   def create 
-   Coupon.create!(coupon_params)
-   redirect_to merchant_coupons_path(params[:merchant_id])
+    @merchant = Merchant.find(params[:merchant_id])
+
+    if @merchant.coupons.active.length >= 5 
+      flash[:alert] = ("Sorry coupon could not be made at this time, The maximum number of coupons (5) has been reached")
+    elsif Coupon.exists?(code: coupon_params[:code])
+      flash[:alert] = ("Another coupon with this code already exists")
+    else 
+      @merchant.coupons.create!(coupon_params)
+      flash[:alert] = ("Coupon successfully added") 
+    end
+    
+    redirect_to merchant_coupons_path(params[:merchant_id])
   end
 
   private 
