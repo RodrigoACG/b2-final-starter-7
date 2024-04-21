@@ -1,0 +1,7 @@
+<h1>Coupons</h1>
+<%= link_to 'Create Coupon', new_merchant_coupon_path(params[:merchant_id]), method: :get %><br>
+
+<% @coupons.each do |coupon| %>
+  <p>Name: <%= link_to "#{coupon.name}", merchant_coupon_path(params[:merchant_id], coupon.id) %></p>
+  <p>Amount off: <%= coupon.dollar_off %></p>
+<% end %>

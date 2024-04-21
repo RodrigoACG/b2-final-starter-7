@@ -40,6 +40,10 @@ RSpec.describe "merchant dashboard" do
     @transaction6 = Transaction.create!(credit_card_number: 879799, result: 1, invoice_id: @invoice_7.id)
     @transaction7 = Transaction.create!(credit_card_number: 203942, result: 1, invoice_id: @invoice_2.id)
 
+    @coupon1 = @merchant1.coupons.create!(name: "BOGO50", code: "BOGO50", dollar_off: 50, status: 1)
+    @coupon2 = @merchant1.coupons.create!(name: "Discount10", code: "Discount10", dollar_off: 10, status: 1)
+    @coupon3 = @merchant1.coupons.create!(name: "Discount20", code: "Discount20", dollar_off: 20, status: 1)
+
     visit merchant_dashboard_index_path(@merchant1)
   end
 
@@ -118,5 +122,35 @@ RSpec.describe "merchant dashboard" do
 
   it "shows the date that the invoice was created in this format: Monday, July 18, 2019" do
     expect(page).to have_content(@invoice_1.created_at.strftime("%A, %B %-d, %Y"))
+  end
+
+  describe '#us 1' do
+    it 'goes to coupon page' do
+      # When I visit my merchant dashboard page
+      visit merchant_dashboard_index_path(@merchant1)
+      # I see a link to view all of my coupons
+      expect(page).to have_link("Coupons")
+      # When I click this link
+      click_on("Coupons")
+      # I'm taken to my coupons index page
+      expect(current_path).to eq(merchant_coupons_path(@merchant1))
+     # Where I see all of my coupon names including their amount off 
+      
+      expect(page).to have_link("BOGO50")
+      expect(page).to have_link("Discount10")
+      expect(page).to have_link("Discount20")
+
+      expect(page).to have_content("Name: BOGO50")
+      expect(page).to have_content("Name: Discount10")
+      expect(page).to have_content("Name: Discount20")
+
+      expect(page).to have_content("Amount off: 50")
+      expect(page).to have_content("Amount off: 10")
+      expect(page).to have_content("Amount off: 20")
+      click_on("Discount20")
+      
+      # And each coupon's name is also a link to its show page.
+      expect(current_path).to eq(merchant_coupon_path(@merchant1, @coupon3))
+    end
   end
 end
