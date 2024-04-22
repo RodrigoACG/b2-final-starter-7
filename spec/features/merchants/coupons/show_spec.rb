@@ -7,6 +7,7 @@ RSpec.describe "Coupons show page" do
     @coupon1 = @merchant1.coupons.create!(name: "BOGO50", code: "BOGO50", dollar_off: 50, status: 1)
     @coupon2 = @merchant1.coupons.create!(name: "Discount10", code: "Discount10", dollar_off: 10, status: 1)
     @coupon3 = @merchant1.coupons.create!(name: "Discount20", code: "Discount20", dollar_off: 20, status: 1)
+    @coupon4 = @merchant1.coupons.create!(name: "Discount30", code: "Discount30", dollar_off: 30, status: 0)
 
     @customer_1 = Customer.create!(first_name: "Joey", last_name: "Smith")
     @customer_2 = Customer.create!(first_name: "Cecilia", last_name: "Jones")
@@ -54,36 +55,54 @@ RSpec.describe "Coupons show page" do
   end
 
   describe '#us 4' do
-  it 'shows button deactivate' do
+    it 'shows button deactivate' do
+      
+      # When I visit one of my active coupon's show pages
+      visit merchant_coupon_path(@merchant1, @coupon1)
+      # I see a button to deactivate that coupon
+      expect(page).to have_button("Deactivate #{@coupon1.name}")
+      click_on("Deactivate #{@coupon1.name}")
+      
+      # When I click that button
+      # I'm taken back to the coupon show page 
+      expect(current_path).to eq(merchant_coupon_path(@merchant1, @coupon1))
+      
+      expect(page).to have_button("Activate #{@coupon1.name}")
+      expect(page).to have_content("Status: inactive")
+      # And I can see that its status is now listed as 'inactive'.
+      
+      # expect(page).to have_content("Status: Inactive")
+    end
     
-    # When I visit one of my active coupon's show pages
-    visit merchant_coupon_path(@merchant1, @coupon1)
-    # I see a button to deactivate that coupon
-    expect(page).to have_button("Deactivate #{@coupon1.name}")
-    click_on("Deactivate #{@coupon1.name}")
-    
-    # When I click that button
-    # I'm taken back to the coupon show page 
-    expect(current_path).to eq(merchant_coupon_path(@merchant1, @coupon1))
-    
-    expect(page).to have_button("Activate #{@coupon1.name}")
-    expect(page).to have_content("Status: inactive")
-    # And I can see that its status is now listed as 'inactive'.
-    
-    # expect(page).to have_content("Status: Inactive")
+    it "sad path" do 
+      # A coupon cannot be deactivated if there are any pending invoices with that coupon
+      
+      visit merchant_coupon_path(@merchant1, @coupon2)
+      expect(page).to have_button("Deactivate #{@coupon2.name}")
+      click_on("Deactivate #{@coupon2.name}")
+      
+      expect(current_path).to eq(merchant_coupon_path(@merchant1, @coupon2))
+      
+      expect(page).to have_content("Sorry, can't deactivate. Coupon is sill in use")
+      # save_and_open_page
+    end
   end
-  
-  it "sad path" do 
-    # A coupon cannot be deactivated if there are any pending invoices with that coupon
-    
-    visit merchant_coupon_path(@merchant1, @coupon2)
-    expect(page).to have_button("Deactivate #{@coupon2.name}")
-    click_on("Deactivate #{@coupon2.name}")
-    
-    expect(current_path).to eq(merchant_coupon_path(@merchant1, @coupon2))
-    
-    expect(page).to have_content("Sorry, can't deactivate. Coupon is sill in use")
-    # save_and_open_page
+
+  describe '#us 5' do
+    it 'Shows button to activate' do
+      # When I visit one of my inactive coupon show pages
+      visit merchant_coupon_path(@merchant1, @coupon4)
+      # I see a button to activate that coupon
+      expect(page).to have_button("Activate #{@coupon4.name}")
+      # When I click that button
+      click_on("Activate #{@coupon4.name}")
+      # I'm taken back to the coupon show page 
+      visit merchant_coupon_path(@merchant1, @coupon4)
+      
+      # And I can see that its status is now listed as 'active'
+      expect(page).to have_button("Deactivate #{@coupon4.name}")
+      expect(page).to have_content("Status: active")
+
     end
   end
 end
