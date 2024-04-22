@@ -1,7 +1,28 @@
 <h1>Coupons</h1>
 <%= link_to 'Create Coupon', new_merchant_coupon_path(params[:merchant_id]), method: :get %><br>
 
+
+
+<h1><%= "Active Coupons" %></h1>
+
+  <section class='active'>
 <% @coupons.each do |coupon| %>
-  <p>Name: <%= link_to "#{coupon.name}", merchant_coupon_path(params[:merchant_id], coupon.id) %></p>
+    <% if coupon.status == "active" %>
+       <p>Name: <%= link_to "#{coupon.name}", merchant_coupon_path(params[:merchant_id], coupon.id) %></p>
+
   <p>Amount off: <%= coupon.dollar_off %></p>
+ 
+    <% end %>
 <% end %>
+  </section>
+
+<h1><%= "Inactive Coupons" %></h1>
+<section class='inactive'>
+  <% @coupons.each do |coupon| %>
+    <% if coupon.status == "inactive" %>
+      <p>Name: <%= link_to "#{coupon.name}", merchant_coupon_path(params[:merchant_id], coupon.id) %></p>
+    <p>Amount off: <%= coupon.dollar_off %></p>
+     
+    <% end %>
+  <% end %>
+</section>
