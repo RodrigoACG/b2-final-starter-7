@@ -112,4 +112,31 @@ RSpec.describe "Coupons index page" do
       expect(page).to have_content("Another coupon with this code already exists")
     end
   end
+
+  describe '#us 6' do
+    it 'shows active and inactive coupons in sections' do
+      merchant1 = Merchant.create!(name: "Hair Care")
+
+      coupon1 = merchant1.coupons.create!(name: "BOGO50", code: "BOGO50", dollar_off: 50, status: 1)
+      coupon2 = merchant1.coupons.create!(name: "Discount10", code: "Discount10", dollar_off: 10, status: 1)
+      coupon3 = merchant1.coupons.create!(name: "Discount20", code: "Discount20", dollar_off: 20, status: 1)
+      coupon4 = merchant1.coupons.create!(name: "Discount30", code: "Discount30", dollar_off: 30, status: 0)
+      # When I visit my coupon index page
+      visit merchant_coupons_path(merchant1)
+
+      within ".active" do
+        expect(page).to have_content(coupon1.name)
+        expect(page).to have_content(coupon2.name)
+        expect(page).to have_content(coupon3.name)
+      end
+
+      within ".inactive" do
+        expect(page).to have_content(coupon4.name)
+      end
+      save_and_open_page
+
+      # I can see that my coupons are separated between active and inactive coupons. 
+
+    end
+  end
 end
