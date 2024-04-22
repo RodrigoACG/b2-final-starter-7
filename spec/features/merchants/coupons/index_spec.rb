@@ -125,15 +125,14 @@ RSpec.describe "Coupons index page" do
       visit merchant_coupons_path(merchant1)
 
       within ".active" do
-        expect(page).to have_content(coupon1.name)
-        expect(page).to have_content(coupon2.name)
-        expect(page).to have_content(coupon3.name)
+        expect(page).to have_content("Name: BOGO50")
+        expect(page).to have_content("Name: Discount10")
+        expect(page).to have_content("Name: Discount20")
       end
 
       within ".inactive" do
-        expect(page).to have_content(coupon4.name)
+        expect(page).to have_content("Name: Discount30")
       end
-      save_and_open_page
 
       # I can see that my coupons are separated between active and inactive coupons. 
 
