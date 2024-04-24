@@ -116,7 +116,38 @@ it 'displays the name and code of the coupon that was used ' do
       
     end
     
-    it "alternate path" do 
+    # it "alternate path1" do 
+    #   merchant1 = Merchant.create(name: "Hair Care")
+    #   merchant2 = Merchant.create(name: "Face Care")
+
+    #   coupon1 = merchant1.coupons.create(name: "BOGO50", code: "BOGO50", dollar_off: 50, status: :active)
+    #   coupon2 = merchant2.coupons.create(name: "Discount15", code: "Discount15", dollar_off: 15, status: :active)
+
+    #   customer = Customer.create(first_name: "Joey", last_name: "Smith")
+
+    #   item1 = Item.create(name: "Shampoo", unit_price: 10, merchant: merchant1)
+    #   item2 = Item.create(name: "Conditioner", unit_price: 8, merchant: merchant2)
+    #   item3 = Item.create(name: "Gel", unit_price: 9, merchant: merchant2)
+
+    #   invoice1 = Invoice.create(customer: customer, status: :completed, coupon: coupon1)
+    #   invoice2 = Invoice.create(customer: customer, status: :completed, coupon: coupon2)
+
+    #   InvoiceItem.create(invoice: invoice1, item: item1, quantity: 2, unit_price: 10, status: 1)
+    #   InvoiceItem.create(invoice: invoice1, item: item2, quantity: 1, unit_price: 8, status: 1)
+    #   InvoiceItem.create(invoice: invoice2, item: item3, quantity: 1, unit_price: 9, status: 1)
+
+    #   visit admin_invoice_path(invoice1.id)
+      
+    #   expect(page).to have_content("Subtotal: $28")
+      
+    #   expect(page).to have_content("Grand Total: $8")
+      
+      
+    # end
+    
+    it "alternate path2" do 
+      # 2. When a coupon with a dollar-off value is used with an invoice with multiple merchants' items, the dollar-off amount applies to the total amount even though there may be items present from another merchant.
+
       merchant1 = Merchant.create!(name: "Hair Care")
       merchant2 = Merchant.create!(name: "Face Care")
 
@@ -153,8 +184,7 @@ it 'displays the name and code of the coupon that was used ' do
       visit admin_invoice_path(invoice_1.id)
       
       expect(page).to have_content("Subtotal: $137")
-      # 2. When a coupon with a dollar-off value is used with an invoice with multiple merchants' items, the dollar-off amount applies to the total amount even though there may be items present from another merchant.
-
+      
       expect(page).to have_content("Grand Total: $87")
 
 
