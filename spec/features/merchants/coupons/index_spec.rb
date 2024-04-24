@@ -80,6 +80,7 @@ RSpec.describe "Coupons index page" do
       # save_and_open_page
 
       expect(current_path).to eq(merchant_coupons_path(merchant1))
+      
       expect(page).to_not have_link("100oFF")
       expect(page).to_not have_content("Name: 100oFF")
       expect(page).to have_content("Sorry coupon could not be made at this time, The maximum number of coupons (5) has been reached")

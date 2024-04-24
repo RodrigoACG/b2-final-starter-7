@@ -40,16 +40,19 @@ RSpec.describe "Coupons show page" do
       # When I visit a merchant's coupon show page 
       visit merchant_coupon_path(@merchant1, @coupon1)
       # I see that coupon's name and code 
-      expect(page).to have_content("Name: BOGO50")
-      expect(page).to have_content("Code: BOGO50")
-      expect(page).to have_content("Amount off: 50")
-      # And I see the percent/dollar off value
-      expect(page).to have_content("Status: active")
+      within '.section' do
+        expect(page).to have_content("Name: BOGO50")
+        expect(page).to have_content("Code: BOGO50")
+        expect(page).to have_content("Amount off: 50")
+        # And I see the percent/dollar off value
+        expect(page).to have_content("Status: active")
+        # And I see a count of how many times that coupon has been used.
+        
+        expect(page).to have_content("Times used: 2")
+      end
       # As well as its status (active or inactive)
       # save_and_open_page
 
-      # And I see a count of how many times that coupon has been used.
-      expect(page).to have_content("Times used: 2")
       # (Note: "use" of a coupon should be limited to successful transactions.)
     end
   end
@@ -64,6 +67,7 @@ RSpec.describe "Coupons show page" do
       click_on("Deactivate #{@coupon1.name}")
       
       # When I click that button
+      save_and_open_page
       # I'm taken back to the coupon show page 
       expect(current_path).to eq(merchant_coupon_path(@merchant1, @coupon1))
       
@@ -97,7 +101,7 @@ RSpec.describe "Coupons show page" do
       # When I click that button
       click_on("Activate #{@coupon4.name}")
       # I'm taken back to the coupon show page 
-      visit merchant_coupon_path(@merchant1, @coupon4)
+      expect(current_path).to eq(merchant_coupon_path(@merchant1, @coupon4))
       
       # And I can see that its status is now listed as 'active'
       expect(page).to have_button("Deactivate #{@coupon4.name}")
