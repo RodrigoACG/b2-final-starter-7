@@ -41,7 +41,7 @@ class CouponsController < ApplicationController
       flash[:notice] = 'Coupon deactivated successfully.'
     end
     
-    if coupon.invoices.in_progress 
+    if coupon.times_used >= 1
 
       flash[:notice] = ("Sorry, can't deactivate. Coupon is sill in use")
     end

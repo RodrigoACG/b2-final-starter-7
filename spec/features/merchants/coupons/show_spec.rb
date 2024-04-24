@@ -14,7 +14,7 @@ RSpec.describe "Coupons show page" do
     @customer_3 = Customer.create!(first_name: "Mariah", last_name: "Carrey")
 
     @invoice_1 = Invoice.create!(customer_id: @customer_1.id, status: 2)
-    @invoice_2 = Invoice.create!(customer_id: @customer_1.id, status: 1, coupon_id: @coupon2.id)
+    @invoice_2 = Invoice.create!(customer_id: @customer_1.id, status: 0, coupon_id: @coupon2.id)
     @invoice_3 = Invoice.create!(customer_id: @customer_2.id, status: 2, coupon_id: @coupon1.id)
     @invoice_4 = Invoice.create!(customer_id: @customer_3.id, status: 2, coupon_id: @coupon1.id)
 
@@ -67,7 +67,7 @@ RSpec.describe "Coupons show page" do
       click_on("Deactivate #{@coupon1.name}")
       
       # When I click that button
-      save_and_open_page
+      # save_and_open_page
       # I'm taken back to the coupon show page 
       expect(current_path).to eq(merchant_coupon_path(@merchant1, @coupon1))
       
@@ -79,13 +79,25 @@ RSpec.describe "Coupons show page" do
     end
     
     it "sad path" do 
+      m1 = Merchant.create!(name:"Sallys")
+      c2 = m1.coupons.create!(name: "B10off", code: "10off", dollar_off: 10, status: 1)
+      cs_1 = Customer.create!(first_name: "Martin", last_name: "Chavez")
+      i1 = Invoice.create!(customer_id: cs_1.id, status: 0, coupon_id: c2.id)
+      item_1 = Item.create!(name: "clippers", description: "This cuts your hair", unit_price: 100, merchant_id: m1.id)
+
+      ii_1 = InvoiceItem.create!(invoice_id: i1.id, item_id: item_1.id, quantity: 1, unit_price: 100, status: 2)
+
+      tran1 = Transaction.create!(credit_card_number: 203942, result: 1, invoice_id: i1.id)
+
+
+      
       # A coupon cannot be deactivated if there are any pending invoices with that coupon
       
-      visit merchant_coupon_path(@merchant1, @coupon2)
-      expect(page).to have_button("Deactivate #{@coupon2.name}")
-      click_on("Deactivate #{@coupon2.name}")
+      visit merchant_coupon_path(m1, c2)
+      expect(page).to have_button("Deactivate #{c2.name}")
+      click_on("Deactivate #{c2.name}")
       
-      expect(current_path).to eq(merchant_coupon_path(@merchant1, @coupon2))
+      expect(current_path).to eq(merchant_coupon_path(m1, c2))
       
       expect(page).to have_content("Sorry, can't deactivate. Coupon is sill in use")
       # save_and_open_page
