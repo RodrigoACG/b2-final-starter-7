@@ -1,9 +1,11 @@
 <h1>Coupon</h1>
-
-<p>Name: <%= @coupon.name %></p>
-<p>Code: <%= @coupon.code %></p>
-<p>Amount off: <%= @coupon.dollar_off %></p>
-<p>Status: <%= @coupon.status %></p>
+<section class='section'>
+  <p>Name: <%= @coupon.name %></p>
+  <p>Code: <%= @coupon.code %></p>
+  <p>Amount off: <%= @coupon.dollar_off %></p>
+  <p>Status: <%= @coupon.status %></p>
+  
+</section>
 
 <% if @coupon.status == "active"  %> 
   <%= button_to "Deactivate #{@coupon.name}", merchant_coupon_path, method: :patch, params: {status: "inactive"} %>
