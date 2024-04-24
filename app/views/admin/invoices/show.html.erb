@@ -44,4 +44,12 @@
     </tbody>
   </table>
 
+  <% if @invoice.coupon.present?  %>
+    <p>Coupon Name: <%= @invoice.coupon.name %></p>
+    <p>Coupon Code: <%= @invoice.coupon.code %></p>
+  <% end %>
+
+  <p>Subtotal: $<%= @invoice.total_revenue %></p>
+  <p>Grand Total: $<%= @invoice.grand_total %></p>
+
 </body>
