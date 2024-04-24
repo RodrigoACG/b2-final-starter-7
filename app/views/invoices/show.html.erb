@@ -48,4 +48,10 @@
     </tbody>
   </table>
 
+  <p>Subtotal: $<%= @invoice.total_revenue %></p>
+  <p>Grand Total: $<%= @invoice.grand_total %></p>
+
+  <% if @invoice.coupon.present?  %>
+    <p>Coupon Used: <%= link_to "#{@invoice.coupon.name}", merchant_coupon_path(merchant_id: @merchant_id, coupon_id: @coupon_id ), method: :get %></p>
+  <% end %>
 </body>
