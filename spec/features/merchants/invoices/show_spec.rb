@@ -100,4 +100,78 @@ RSpec.describe "invoices show" do
     end
   end
 
+  describe '#us7' do
+    it 'displays the subtotal and grand total' do
+      merchant1 = Merchant.create!(name: "Hair Care")
+
+      customer_1 = Customer.create!(first_name: "Joey", last_name: "Smith")
+      
+      coupon1 = merchant1.coupons.create!(name: "BOGO50", code: "BOGO50", dollar_off: 50, status: 1)
+      coupon2 = merchant1.coupons.create!(name: "Discount10", code: "Discount10", dollar_off: 10, status: 1)
+      coupon3 = merchant1.coupons.create!(name: "Discount20", code: "Discount20", dollar_off: 20, status: 1)
+
+      invoice_1 = Invoice.create!(customer_id: customer_1.id, status: 2, coupon_id: coupon1.id)
+      invoice_2 = Invoice.create!(customer_id: customer_1.id, status: 2)
+      
+  
+      item_1 = Item.create!(name: "Shampoo", description: "This washes your hair", unit_price: 10, merchant_id: merchant1.id)
+      item_2 = Item.create!(name: "Conditioner", description: "This makes your hair shiny", unit_price: 8, merchant_id: merchant1.id)
+      item_3 = Item.create!(name: "Brush", description: "This takes out tangles", unit_price: 5, merchant_id: merchant1.id)
+  
+      ii_1 = InvoiceItem.create!(invoice_id: invoice_1.id, item_id: item_1.id, quantity: 2, unit_price: 10, status: 2)
+      ii_2 = InvoiceItem.create!(invoice_id: invoice_1.id, item_id: item_2.id, quantity: 1, unit_price: 8, status: 2)
+      ii_3 = InvoiceItem.create!(invoice_id: invoice_2.id, item_id: item_3.id, quantity: 1, unit_price: 5, status: 2)
+     
+  
+      transaction1 = Transaction.create!(credit_card_number: 203942, result: 1, invoice_id: invoice_1.id)
+      transaction74 = Transaction.create!(credit_card_number: 203942, result: 1, invoice_id: invoice_2.id)
+  
+
+      # When I visit one of my merchant invoice show pages
+      visit merchant_invoice_path(merchant1, invoice_1)
+      # I see the subtotal for my merchant from this invoice (that is, the total that does not include coupon discounts)
+      expect(page).to have_content("Subtotal: $28")
+      # save_and_open_page
+      # And I see the grand total revenue after the discount was applied
+    
+      expect(page).to have_content("Grand Total: $0")
+      # And I see the name and code of the coupon used as a link to that coupon's show page.
+      expect(page).to have_link("#{coupon1.name}")
+    end
+
+    it "shows the price when the coupon is not greater then the total revenue" do 
+      merchant1 = Merchant.create!(name: "Hair Care")
+
+      customer_1 = Customer.create!(first_name: "Joey", last_name: "Smith")
+      
+      coupon1 = merchant1.coupons.create!(name: "BOGO50", code: "BOGO50", dollar_off: 50, status: 1)
+      coupon2 = merchant1.coupons.create!(name: "Discount10", code: "Discount10", dollar_off: 10, status: 1)
+      coupon3 = merchant1.coupons.create!(name: "Discount20", code: "Discount20", dollar_off: 20, status: 1)
+
+      invoice_1 = Invoice.create!(customer_id: customer_1.id, status: 2, coupon_id: coupon2.id)
+      invoice_2 = Invoice.create!(customer_id: customer_1.id, status: 2)
+      
+  
+      item_1 = Item.create!(name: "Shampoo", description: "This washes your hair", unit_price: 10, merchant_id: merchant1.id)
+      item_2 = Item.create!(name: "Conditioner", description: "This makes your hair shiny", unit_price: 8, merchant_id: merchant1.id)
+      item_3 = Item.create!(name: "Brush", description: "This takes out tangles", unit_price: 5, merchant_id: merchant1.id)
+  
+      ii_1 = InvoiceItem.create!(invoice_id: invoice_1.id, item_id: item_1.id, quantity: 2, unit_price: 10, status: 2)
+      ii_2 = InvoiceItem.create!(invoice_id: invoice_1.id, item_id: item_2.id, quantity: 1, unit_price: 8, status: 2)
+      ii_3 = InvoiceItem.create!(invoice_id: invoice_2.id, item_id: item_3.id, quantity: 1, unit_price: 5, status: 2)
+     
+  
+      transaction1 = Transaction.create!(credit_card_number: 203942, result: 1, invoice_id: invoice_1.id)
+      transaction74 = Transaction.create!(credit_card_number: 203942, result: 1, invoice_id: invoice_2.id)
+
+      visit merchant_invoice_path(merchant1, invoice_1)
+
+      expect(page).to have_content("Subtotal: $28")
+
+      expect(page).to have_content("Grand Total: $18")
+      expect(page).to have_link("#{coupon2.name}")
+
+    end
+  end
+
 end
